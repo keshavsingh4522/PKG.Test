@@ -92,4 +92,4 @@ jobs:
     - name: push
       run :
         tree
-        dotnet nuget push **/*.nupkg --source "github"
+        dotnet nuget push **/*.nupkg --skip-duplicate
