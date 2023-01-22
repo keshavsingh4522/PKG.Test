@@ -29,9 +29,11 @@ jobs:
           echo "Version = 2.3.GITHUB_RUN_NUMBER"
           echo "PKG Url = https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           echo "Repository name => ${{github.repository}}"
-          echo "Build id => ${{Build.BuildId}}"
-          echo "Build Number => ${{Build.BuildNumber}}"
+          echo "Github run id => ${{github.run_id}}"
+          echo "Github run number => ${{github.run_number}}"
+          echo "Github run attempt => ${{github.run_attempt}}"
           tree
+          
     - name: Adjust NuGet Config Credentials
       run: |
         echo $(sed -e "s/\${USER}/${{ secrets.REGISTRY_USER }}/" -e "s@\${PAT}@${{ secrets.PACKAGE_TOKEN }}@" nuget.config) >nuget.config
