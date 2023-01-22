@@ -54,8 +54,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -74,24 +72,23 @@ jobs:
       run: |
         echo $(sed -e "s/\${USER}/${{ secrets.REGISTRY_USER }}/" -e "s@\${PAT}@${{ secrets.PACKAGE_TOKEN }}@" nuget.config) >nuget.config
     
-    # Restore the application
-    - name: Restore the application
-      run: dotnet restore 
-
-    # Buid the project.
-    - name: Build the application
-      run: dotnet build --configuration='Release'
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+      
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
     
     # Pack the build
     - name: pack
       run: |
         tree
-        ls -la
-        dotnet pack --configuration Release
+        dotnet pack
     
     # Push the pkg
     - name: push
       run :
         tree
-        ls -la
         dotnet nuget push **/*.nupkg --source "github"
