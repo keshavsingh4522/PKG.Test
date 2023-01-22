@@ -71,6 +71,7 @@ jobs:
     - name: Adjust NuGet Config Credentials
       run: |
         echo $(sed -e "s/\${USER}/${{ secrets.REGISTRY_USER }}/" -e "s@\${PAT}@${{ secrets.PACKAGE_TOKEN }}@" nuget.config) >nuget.config
+        cat nuget.config
     
     - name: Restore dependencies
       run: dotnet restore
