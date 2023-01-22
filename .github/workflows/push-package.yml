@@ -72,7 +72,7 @@ jobs:
     - name: Adjust NuGet Config Credentials
       run: |
         rm -f ./nuget.config
-        nuget.ci.config nuget.config
+        mv nuget.ci.config nuget.config
         echo $(sed -e "s/\${USER}/${{ secrets.REGISTRY_USER }}/" -e "s@\${PAT}@${{ secrets.PACKAGE_TOKEN }}@" nuget.config) >nuget.config
     
     # Restore the application
