@@ -32,6 +32,7 @@ jobs:
           echo "Github run id => ${{github.run_id}}"
           echo "Github run number => ${{github.run_number}}"
           echo "Github run attempt => ${{github.run_attempt}}"
+          echo Build number is $BUILD_NUMBER
           tree
           
     - name: Adjust NuGet Config Credentials
