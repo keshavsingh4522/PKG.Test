@@ -66,12 +66,11 @@ jobs:
     # Preparation of data
     - name: Prep
       run: |
-          echo "Version => 2.3.$GITHUB_RUN_NUMBER"
-          echo "PKG Url => https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          echo "Version = 2.3.$GITHUB_RUN_NUMBER"
+          echo "PKG Url = https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           echo "Repository name => ${{github.repository}}"
-    
     - name: Adjust NuGet Config Credentials
-      run: |
+      run: |
         rm -f ./nuget.config
         nuget.ci.config nuget.config
         echo $(sed -e "s/\${USER}/${{ secrets.REGISTRY_USER }}/" -e "s@\${PAT}@${{ secrets.PACKAGE_TOKEN }}@" nuget.config) >nuget.config
@@ -91,6 +90,3 @@ jobs:
     # Push the pkg
     - name: push
       run : dotnet nuget push **/*.nupkg --source "github"
-    
-      
-    
