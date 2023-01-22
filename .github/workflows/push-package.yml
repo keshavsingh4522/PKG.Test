@@ -32,13 +32,11 @@ jobs:
           echo "Github run id => ${{github.run_id}}"
           echo "Github run number => ${{github.run_number}}"
           echo "Github run attempt => ${{github.run_attempt}}"
-          echo Build number is $BUILD_NUMBER
           tree
           
     - name: Adjust NuGet Config Credentials
       run: |
         echo $(sed -e "s/\${USER}/${{ secrets.REGISTRY_USER }}/" -e "s@\${PAT}@${{ secrets.PACKAGE_TOKEN }}@" nuget.config) >nuget.config
-        cat nuget.config
     
     - name: Restore dependencies
       run: dotnet restore
@@ -52,7 +50,7 @@ jobs:
     # Pack the build
     - name: pack
       run: |
-        dotnet pack --configuration='Release'
+        dotnet pack --configuration='Release' /p:Version=1.0.${{github.run_number}}
         tree
   
     # Push the pkg
