@@ -47,14 +47,7 @@ on:
 jobs:
 
   build:
-
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
-
     runs-on: ubuntu-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
-
     env:
       Solution_Name: PKG.Test.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
       
@@ -69,13 +62,35 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-
+        
+    # Preparation of data
+    - name: Prep
+      run: |
+          echo "Version => 2.3.$GITHUB_RUN_NUMBER"
+          echo "PKG Url => https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          echo "Repository name => ${{github.repository}}"
+    
+    - name: Adjust NuGet Config Credentials
+      run: |
+        rm -f ./nuget.config
+        nuget.ci.config nuget.config
+        echo $(sed -e "s/\${USER}/${{ secrets.REGISTRY_USER }}/" -e "s@\${PAT}@${{ secrets.PACKAGE_TOKEN }}@" nuget.config) >nuget.config
+    
     # Restore the application
     - name: Restore the application
       run: dotnet restore 
 
     # Buid the project.
-    - name: Build
+    - name: Build the application
       run: dotnet build --configuration='Release'
+    
+    # Pack the build
+    - name: pack
+      run: dotnet pack --configuration Release
+    
+    # Push the pkg
+    - name: push
+      run : dotnet nuget push **/*.nupkg --source "github"
+    
       
     
