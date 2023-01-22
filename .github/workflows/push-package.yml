@@ -85,11 +85,10 @@ jobs:
     # Pack the build
     - name: pack
       run: |
-        tree
         dotnet pack
-    
+        tree
+  
     # Push the pkg
     - name: push
       run :
-        tree
-        dotnet nuget push **/*.nupkg --skip-duplicate
+        dotnet nuget push **/*.nupkg --source="github" --skip-duplicate
