@@ -8,8 +8,25 @@ on:
     branches: [ "master" ]
 
 jobs:
+  prep:
+    name: checking the data
+    runs-on: ubuntu-latest
+    steps:
+    # Preparation of data
+    - name: Prep
+      run: |
+          echo "Version = 2.3.GITHUB_RUN_NUMBER"
+          echo "PKG Url = https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          echo "Repository name => ${{github.repository}}"
+          echo "Github run id => ${{github.run_id}}"
+          echo "Github run number => ${{github.run_number}}"
+          echo "Github run attempt => ${{github.run_attempt}}"
+          echo "${{ github.workflow }}-${{ github.ref }}"
+          echo "Github Actor => ${{ github.actor }}"
+          tree
   build:
     name: "Build and Test Analysis"
+    needs: prep
     runs-on: ubuntu-latest  # For a list of available runner types, refer to
     env:
       Solution_Name: PKG.Test.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
@@ -23,18 +40,6 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-        
-    # Preparation of data
-    - name: Prep
-      run: |
-          echo "Version = 2.3.GITHUB_RUN_NUMBER"
-          echo "PKG Url = https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-          echo "Repository name => ${{github.repository}}"
-          echo "Github run id => ${{github.run_id}}"
-          echo "Github run number => ${{github.run_number}}"
-          echo "Github run attempt => ${{github.run_attempt}}"
-          echo "${{ github.workflow }}-${{ github.ref }}"
-          tree
           
     - name: Adjust NuGet Config Credentials
       run: |
@@ -48,12 +53,7 @@ jobs:
       
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    
-  PusPackage:
-    name: "Pack and Push the Package"
-    needs: build # needs: [job1, job2]
-    runs-on: ubuntu-latest
-    steps:
+
     # Pack the build
     - name: pack
       run: |
